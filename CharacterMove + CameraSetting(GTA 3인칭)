@@ -1,0 +1,43 @@
+// 캐릭터 앞, 뒤 이동
+void AGBCharacter::UpDown(float value)
+{
+	//AddMovementInput(FRotationMatrix(FRotator(0, GetControlRotation().Yaw, 0)).GetUnitAxis(EAxis::X), value);
+	AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0)).GetUnitAxis(EAxis::X), value);
+}
+
+// 캐릭터 좌, 우 이동
+void AGBCharacter::LeftRight(float value)
+{
+	AddMovementInput(FRotationMatrix(FRotator(0, GetControlRotation().Yaw, 0)).GetUnitAxis(EAxis::Y), value);
+}
+
+// 카메라 좌, 우 이동(Yaw = Z축 회전)
+void AGBCharacter::Turn(float value)
+{
+	AddControllerYawInput(value);
+}
+
+// 카메라 상, 하 이동(Pitch = Y축 회전)
+void AGBCharacter::LookUp(float value)
+{
+	AddControllerPitchInput(value);
+}
+
+
+void AGBCharacter::CameraSetting()
+{
+	// 마우스를 움직이면 캐릭터는 회전하지 않고, 가만히 서있기
+	// 카메라 지지대가 마우스 움직임에 따라 회전
+	springArm->bUsePawnControlRotation = true;		// 폰 제어 회전 사용(가능하면, 폰의 뷰/컨트롤러 회전 값을 사용할 것인지)
+	springArm->bInheritPitch = true;				// 카메라 세팅(피치 상속 = Y축 회전 상속)
+	springArm->bInheritRoll = true;					// 카메라 세팅(롤 상속 =  X축 회전 상속)
+	springArm->bInheritYaw = true;					// 카메라 세팅(요 상속 = Z축 회전 상속)
+	springArm->bDoCollisionTest = true;				// 콜리전 테스트 수행하여, 카메라 클리핑이 일어나는 것을 방지
+	bUseControllerRotationYaw = false;				// 컨트롤러 요 회전 끄기
+
+	// 캐릭터 무브먼트 컴포넌트의 OrientRotationMovement 기능으로, 캐릭터가 움직이는 방향으로 캐릭터 자동 회전
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	// UseControllerDesiredRotation 속성을 체크하면 컨트롤 회전이 가리키는 방향으로 캐릭터가 부드럽게 회전한다.
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->RotationRate = FRotator(0, 720.0f, 0);	// 회전 속도
+}
